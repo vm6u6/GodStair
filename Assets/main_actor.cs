@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class main_actor : MonoBehaviour
 {
-    public float moveSpeed = 5f;              // 移動速度
+    public float moveSpeed = 0.8f;              // 移動速度
     public float jumpForce = 5f;              // 起始跳躍力量
-    public float jumpHoldDuration = 0.5f;     // 按住空白鍵的最大持續時間
-
+    public float jumpHoldDuration = 0.5f;     // 按住空白鍵的最大持續時間   
     public float downTime, upTime, pressTime = 0;
 
+    private int moveDirection = 1;            // 移動方向，1代表向右，-1代表向左
     private bool isJumping = false;           // 是否正在跳躍 Ready
+    private bool islanding = true; 
     private SpriteRenderer spriteRenderer;    // SpriteRenderer組件
     private Rigidbody2D rb;                   // Rigidbody2D組件
 
@@ -23,41 +24,47 @@ public class main_actor : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        // 獲取玩家的輸入
-        float horizontalInput = Input.GetAxis("Horizontal");
-
-        // 計算移動的方向
-        Vector3 movem ent = new Vector3(horizontalInput, 0f, 0f) * moveSpeed * Time.deltaTime;
+void Update()
+    {   
+        // 計算移動的位移
+        float movement = moveDirection * moveSpeed * Time.deltaTime;
 
         // 更新角色位置
-        transform.position += movement;
+        transform.Translate(movement, 0f, 0f);
+
+        // 檢查是否超出邊界
+        if (transform.position.x < -4.3f )  // 超出左邊界
+        {
+            moveDirection = 1; // 改變移動方向為向右
+        }
+        else if (transform.position.x > 4.4f )  // 超出右邊界
+        {
+            moveDirection = -1; // 改變移動方向為向左
+        }
 
         // 根據水平輸入翻轉圖片
-        if (horizontalInput > 0)
+        if (moveDirection > 0)
         {
             spriteRenderer.flipX = false; // 不翻轉圖片
         }
-        else if (horizontalInput < 0)
+        else if (moveDirection < 0)
         {
             spriteRenderer.flipX = true; // 翻轉圖片
         }
 
         // 處理跳躍
-        if (Input.GetKeyDown(KeyCode.Space) && !isJumping)
+        if (Input.GetKeyDown(KeyCode.Space) && !isJumping && islanding)
         {
             downTime = Time.time;
             isJumping = true;
         }
 
-        if (Input.GetKeyUp(KeyCode.Space))
+        if (Input.GetKeyUp(KeyCode.Space) && islanding)
         {
             upTime = Time.time;
             pressTime = upTime - downTime;
             isJumping = false;
             StartJump();
-            pressTime = 0;
         }
     }
 
@@ -65,15 +72,22 @@ public class main_actor : MonoBehaviour
     private void StartJump()
     {
         rb.velocity = new Vector2(rb.velocity.x, jumpForce + pressTime * 2f);
-        isJumping = true;
+        islanding = false;
+        pressTime = 0;
+        jumpForce = 5f;
     }
 
-    // 檢測地面碰撞
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("floor") || collision.gameObject.CompareTag("stair") || collision.gameObject.CompareTag("acc_stair"))
+        if (collision.gameObject.CompareTag("floor") || collision.gameObject.CompareTag("stair") || collision.gameObject.CompareTag("acc_stair") && rb.velocity.y == 0f)
         {
-            isJumping = false;
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 1f); // 往下發射一個長度為1的射線
+
+            if (hit.collider != null) // 如果射線有碰撞到其他物體
+            {
+                isJumping = false;
+                islanding = true;
+            }
         }
     }
 }
