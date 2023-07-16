@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class main_actor : MonoBehaviour
 {
-    public float moveSpeed = 0.8f;              // 移動速度
+    public float moveSpeed = 0.2f;              // 移動速度
     public float jumpForce = 5f;              // 起始跳躍力量
     public float jumpHoldDuration = 0.5f;     // 按住空白鍵的最大持續時間   
     public float downTime, upTime, pressTime = 0;
@@ -21,6 +21,14 @@ public class main_actor : MonoBehaviour
         // 獲取SpriteRenderer和Rigidbody2D組件
         spriteRenderer = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
+
+        Camera mainCamera = Camera.main;
+
+        // 获取相机跟随脚本组件
+        Main_camera cameraFollow = mainCamera.GetComponent<Main_camera>();
+
+        // 设置相机跟随的目标为角色对象
+        cameraFollow.target = transform;
     }
 
     // Update is called once per frame
