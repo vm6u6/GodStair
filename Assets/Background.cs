@@ -5,23 +5,30 @@ using UnityEngine;
 public class Background : MonoBehaviour
 {
     private float ori_position;
-    
+    private Transform mainActorTransform;
 
     // Start is called before the first frame update
     void Start()
     {
         ori_position = transform.position.y;
-        Debug.Log(ori_position);
+        mainActorTransform = GameObject.Find("main_actor").transform;
+        //Debug.Log(ori_position);
     }
 
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(transform.position.y);
-        if (transform.position.y - ori_position > 8f)
+        if (mainActorTransform.position.y - ori_position > 6f )
+        {
+            if ( gameObject.tag == "BackGround" )
+            {
+                transform.parent.GetComponent<BackGroundManager>().SpawnBackground(transform.position);
+            }
+        }
+
+        if (mainActorTransform.position.y - ori_position > 10f)
         {
             Destroy(gameObject);
-            transform.parent.GetComponent<BackGroundManager>().SpawnBackground(transform.position);
         }
     }
 }
