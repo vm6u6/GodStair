@@ -8,15 +8,12 @@ public class BackGroundManager : MonoBehaviour
 
     public void SpawnBackground(Vector3 position)
     {
-        // 生成背景对象
         GameObject background = Instantiate(BackGroundPrefabs[0], transform);
         background.transform.position = new Vector3(position.x, position.y + 19.853744f);
 
-        // 生成左边界对象
         GameObject left_bond = Instantiate(BackGroundPrefabs[1], transform);
         left_bond.transform.position = new Vector3(position.x - 4.866793f, position.y + 19.853744f);
 
-        // 生成右边界对象
         GameObject right_bond = Instantiate(BackGroundPrefabs[2], transform);
         right_bond.transform.position = new Vector3(position.x + 4.829999f, position.y + 19.853744f);
     }
