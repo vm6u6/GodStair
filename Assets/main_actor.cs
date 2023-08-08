@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class main_actor : MonoBehaviour
 {
-    public float moveSpeed = 0.2f;              // 移動速度
+    public float moveSpeed = 0.2f;            // 移動速度
     public float jumpForce = 5f;              // 起始跳躍力量
     public float jumpHoldDuration = 0.5f;     // 按住空白鍵的最大持續時間   
     public float downTime, upTime, pressTime = 0;
@@ -14,7 +14,7 @@ public class main_actor : MonoBehaviour
     private bool islanding = true; 
     private SpriteRenderer spriteRenderer;    // SpriteRenderer組件
     private Rigidbody2D rb;                   // Rigidbody2D組件
-
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -32,7 +32,7 @@ public class main_actor : MonoBehaviour
     }
 
     // Update is called once per frame
-void Update()
+    void Update()
     {   
         // 計算移動的位移
         float movement = moveDirection * moveSpeed * Time.deltaTime;
@@ -87,15 +87,17 @@ void Update()
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        // 防止空中跳躍，挑一次後要碰到下一個物體才能再跳
         if (collision.gameObject.CompareTag("floor") || collision.gameObject.CompareTag("stair") || collision.gameObject.CompareTag("acc_stair") && rb.velocity.y == 0f)
         {
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 1f); // 往下發射一個長度為1的射線
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 1f);
 
-            if (hit.collider != null) // 如果射線有碰撞到其他物體
+            if (hit.collider != null)
             {
                 isJumping = false;
                 islanding = true;
             }
         }
     }
+
 }

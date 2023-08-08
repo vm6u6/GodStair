@@ -6,6 +6,7 @@ public class Floor : MonoBehaviour
 {
     private float ori_position;
     private Transform mainActorTransform;
+    private Transform backgroundTransform;
 
     // Start is called before the first frame update
     void Start()
