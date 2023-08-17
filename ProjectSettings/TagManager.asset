@@ -9,6 +9,7 @@ TagManager:
   - acc_stair
   - border
   - BackGround
+  - Processed
   layers:
   - Default
   - TransparentFX

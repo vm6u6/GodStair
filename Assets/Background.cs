@@ -12,23 +12,20 @@ public class Background : MonoBehaviour
     {
         ori_position = transform.position.y;
         mainActorTransform = GameObject.Find("main_actor").transform;
-        //Debug.Log(ori_position);
+        // Debug.Log(ori_position);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (mainActorTransform.position.y - ori_position > 6f )
+        if (mainActorTransform.position.y - ori_position > 15f && gameObject.tag == "BackGround")
         {
-            if ( gameObject.tag == "BackGround" )
-            {
-                transform.parent.GetComponent<BackGroundManager>().SpawnBackground(transform.position);
-            }
-        }
-
-        if (mainActorTransform.position.y - ori_position > 10f)
-        {
+            transform.parent.GetComponent<BackGroundManager>().SpawnBackground(transform.position);
+            transform.parent.GetComponent<BackGroundManager>().SpawnFloor(transform.position);
+            ori_position = ori_position + 15;
+            gameObject.tag = "Processed";
             Destroy(gameObject);
         }
+
     }
 }
