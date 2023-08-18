@@ -17,9 +17,9 @@ public class BackGroundManager : MonoBehaviour
             return;
         }
 
-        InstantiateBackground(BackGroundPrefabs[0], position.x, position.y + 30f);
-        InstantiateBackground(BackGroundPrefabs[1], position.x - 4.8f, position.y + 30f);
-        InstantiateBackground(BackGroundPrefabs[2], position.x + 4.8f, position.y + 30f);
+        InstantiateBackground(BackGroundPrefabs[0], 0, position.y + 30f);
+        InstantiateBackground(BackGroundPrefabs[1], - 4.8f, position.y + 30f);
+        InstantiateBackground(BackGroundPrefabs[2],  4.8f, position.y + 30f);
     }
 
     void InstantiateBackground(GameObject prefab, float x, float y)
