@@ -1,40 +1,47 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class Background : MonoBehaviour
 {
-    private float lastUpdatedY = 0f;
     private Transform mainActorTransform;
-    private float updateInterval = 15.0f;
-    private float destroyThreshold = 30.0f; // 距離閾值，超過這個距離的物件會被摧毀
+    private float updateInterval = 10.0f;
+    private float destroyThreshold = 10.0f;
+    private bool canUpdateBackground = true;
+    private float lastUpdatedY_Background = 0.0f;
 
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log("Background Start method called!");
         mainActorTransform = GameObject.Find("main_actor").transform;
+    }
+
+    public void Initialize(float lastUpdatedValue)
+    {
+        lastUpdatedY_Background = lastUpdatedValue;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (mainActorTransform.position.y - lastUpdatedY > updateInterval)
+        float actorBackground_dis = mainActorTransform.position.y - lastUpdatedY_Background;
+        if (actorBackground_dis >= -4 && canUpdateBackground && gameObject.tag == "background")
         {
-            Debug.Log("update");
-            UpdateBackground();
-            lastUpdatedY += updateInterval;
+            transform.parent.GetComponent<BackGroundManager>().SpawnBackground(lastUpdatedY_Background);
+            lastUpdatedY_Background = lastUpdatedY_Background + updateInterval;
+            canUpdateBackground = false; 
+        }
+        else if (mainActorTransform.position.y - lastUpdatedY_Background < -4 || mainActorTransform.position.y - lastUpdatedY_Background > 0)
+        {
+            canUpdateBackground = true;  
         }
 
-        // 使用物件自身的位置計算距離
         if (mainActorTransform.position.y - transform.position.y > destroyThreshold)
         {
             Destroy(gameObject);
         }
     }
-
-    void UpdateBackground()
-    {
-        transform.parent.GetComponent<BackGroundManager>().SpawnBackground(transform.position);
-        transform.parent.GetComponent<BackGroundManager>().SpawnFloor(transform.position);
-    }
 }
+

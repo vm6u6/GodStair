@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 312144298351282427}
   - component: {fileID: 427398588308818513}
   - component: {fileID: 611164879892053930}
-  - component: {fileID: 6321576684179985440}
+  - component: {fileID: 2755286844904179346}
   m_Layer: 0
   m_Name: normal_stair 1
   m_TagString: stair
@@ -132,7 +132,7 @@ PlatformEffector2D:
   m_UseSideFriction: 0
   m_UseSideBounce: 0
   m_SideArc: 1
---- !u!114 &6321576684179985440
+--- !u!114 &2755286844904179346
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -141,6 +141,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 2822570608394385229}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c3b60cfa2e605ee4092b1ceddf48379c, type: 3}
+  m_Script: {fileID: 11500000, guid: 7521fd6126c1f10469d3fa0fc290125f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
