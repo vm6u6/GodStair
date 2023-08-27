@@ -19,9 +19,9 @@ public class BackGroundManager : MonoBehaviour
         {
             Debug.LogError("One of the BackGroundPrefabs is missing!");
         }
-        InstantiateBackground(BackGroundPrefabs[0],      0, y + 10f);
-        InstantiateBackground(BackGroundPrefabs[1], - 4.8f, y + 10f);
-        InstantiateBackground(BackGroundPrefabs[2],   4.8f, y + 10f);
+        InstantiateBackground(BackGroundPrefabs[0], -1.474f, y + 7.7177f);
+        InstantiateBackground(BackGroundPrefabs[1], - 5.55f, y + 7.7177f);
+        InstantiateBackground(BackGroundPrefabs[2],   2.6f, y + 7.7177f);
     }
 
     void InstantiateBackground(GameObject prefab, float x, float y)

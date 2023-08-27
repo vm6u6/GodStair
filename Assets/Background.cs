@@ -6,7 +6,7 @@ using System.Linq;
 public class Background : MonoBehaviour
 {
     private Transform mainActorTransform;
-    private float updateInterval = 10.0f;
+    private float updateInterval = 7.7177f;
     private float destroyThreshold = 10.0f;
     private bool canUpdateBackground = true;
     private float lastUpdatedY_Background = 0.0f;
@@ -27,13 +27,13 @@ public class Background : MonoBehaviour
     void Update()
     {
         float actorBackground_dis = mainActorTransform.position.y - lastUpdatedY_Background;
-        if (actorBackground_dis >= -4 && canUpdateBackground && gameObject.tag == "background")
+        if (actorBackground_dis >= -3 && canUpdateBackground && gameObject.tag == "background")
         {
             transform.parent.GetComponent<BackGroundManager>().SpawnBackground(lastUpdatedY_Background);
             lastUpdatedY_Background = lastUpdatedY_Background + updateInterval;
             canUpdateBackground = false; 
         }
-        else if (mainActorTransform.position.y - lastUpdatedY_Background < -4 || mainActorTransform.position.y - lastUpdatedY_Background > 0)
+        else if (mainActorTransform.position.y - lastUpdatedY_Background < -3 || mainActorTransform.position.y - lastUpdatedY_Background > 0)
         {
             canUpdateBackground = true;  
         }

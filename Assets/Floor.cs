@@ -6,7 +6,7 @@ public class Floor : MonoBehaviour
 {
     private List<float> lastUpdatedY_stairs = new List<float>();    // 儲存樓梯的Y軸位置
     private Transform mainActorTransform;
-    private float updateInterval = 10.0f;
+    private float updateInterval = 7.7177f;
     private float destroyThreshold = 10.0f;
     private bool canUpdateStairs = true;
 
@@ -18,7 +18,7 @@ public class Floor : MonoBehaviour
         mainActorTransform = GameObject.Find("main_actor").transform;
 
         // 初始化樓梯的Y軸位置
-        for (int i = -2; i < 5; i++)
+        for (int i = -1; i < 5; i++)
         {
             lastUpdatedY_stairs.Add(i);
         }

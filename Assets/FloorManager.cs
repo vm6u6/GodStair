@@ -38,7 +38,7 @@ public class FloorManager : MonoBehaviour
                 
                 do
                 {
-                    xPos = Random.Range(-4.6f + floor_Width / 2, 4.6f - floor_Width / 2);
+                    xPos = Random.Range(-5.35f + floor_Width / 2, 2.4f - floor_Width / 2);
                     attempts++;
                     
                     if (attempts > 10)
@@ -49,7 +49,7 @@ public class FloorManager : MonoBehaviour
                 if (attempts <= 10)
                 {
                     usedPositions.Add(xPos);
-                    floor.transform.position = new Vector3(xPos, position + 8f);
+                    floor.transform.position = new Vector3(xPos, position + 6f);
                 }
             }
 
