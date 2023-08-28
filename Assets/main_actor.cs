@@ -3,34 +3,41 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class MainActor : MonoBehaviour
+// 0.8597
+// 8.5774
+
+
+public class main_actor : MonoBehaviour
 {
-    [SerializeField] private float moveSpeed = 1f;              
-    [SerializeField] private int cntFloorCertification = 0;   
-    [SerializeField] private float jumpForce = 5f;             
-    [SerializeField] private GameObject powerBar;
+    [SerializeField] private GameObject power_bar;
     [SerializeField] private TextMeshProUGUI textMeshPro;
 
-    private int maxFloor = 0; 
+    private float moveSpeed = 1f;              
+    private int max_floor = 0; 
+    private int cnt_floor_certification = 0;   
     private float downTime, upTime, pressTime = 0;
+    private float jumpForce = 5f;              
     private int moveDirection = 1;            
     private bool isJumping = false;           
     private bool islanding = true; 
     private SpriteRenderer spriteRenderer;    
     private Rigidbody2D rb;                   
     private float currentPressTime = 0;
+    private float timeOnGround = 0f;
 
-    private void Start()
-    {
+    
+
+    void Start(){
         spriteRenderer = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
         Camera mainCamera = Camera.main;
-        MainCamera cameraFollow = mainCamera.GetComponent<MainCamera>();
+        Main_camera cameraFollow = mainCamera.GetComponent<Main_camera>();
         cameraFollow.target = transform;
     }
 
-    private void Update()
-    {   
+    void Update(){   
+
+        // { Movement }_________________________________________________________________________
         float currentSpeed = moveSpeed;
         if (Input.GetKey(KeyCode.Space))
         {
@@ -39,55 +46,64 @@ public class MainActor : MonoBehaviour
         float movement = moveDirection * currentSpeed * Time.deltaTime;
         transform.Translate(movement, 0f, 0f);
 
+        // { Jumping }_________________________________________________________________________
         if (Input.GetKeyDown(KeyCode.Space) && !isJumping && islanding)
         {
-            downTime = Time.time;
-            currentPressTime = 0;
-            isJumping = true;
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 1f);
+
+            if (hit.collider != null)
+            {
+                downTime = Time.time;
+                currentPressTime = 0;
+                isJumping = true;
+            }
         }
 
         if (Input.GetKey(KeyCode.Space) && islanding)
         {
             currentPressTime += Time.deltaTime;
-            UpdatePowerBar(currentPressTime);
+            update_powerBar(currentPressTime);
         }
 
         if (Input.GetKeyUp(KeyCode.Space) && islanding)
         {
-            upTime = Time.time;
-            pressTime = upTime - downTime;
-            if (pressTime > 3)
-                pressTime = 3;
-            isJumping = false;
-            StartJump();
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 1f);
+
+            if (hit.collider != null)
+            {
+                upTime = Time.time;
+                pressTime = upTime - downTime;
+                if (pressTime > 3)
+                    pressTime = 3;
+                isJumping = false;
+                StartJump();
+            }
         }
-        CountFloor();
+
+        
+        cnt_floor();
     }
 
-    private void StartJump()
-    {
+    private void StartJump(){
         rb.velocity = new Vector2(rb.velocity.x, jumpForce + pressTime * 2f);
         islanding = false;
         pressTime = 0;
         jumpForce = 5f;
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("right_border"))
-        {
+    private void OnCollisionEnter2D(Collision2D collision){
+        if (collision.gameObject.CompareTag("right_border")){
             moveDirection = -1;
             spriteRenderer.flipX = true;
         }
-        else if (collision.gameObject.CompareTag("left_border"))
-        {
+        else if(collision.gameObject.CompareTag("left_border")){
             moveDirection = 1;
             spriteRenderer.flipX = false;
         }
 
-        if ((collision.gameObject.CompareTag("floor") || 
-             collision.gameObject.CompareTag("stair") || 
-             collision.gameObject.CompareTag("acc_stair")) && 
+        if (collision.gameObject.CompareTag("floor") || 
+            collision.gameObject.CompareTag("stair") || 
+            collision.gameObject.CompareTag("acc_stair") && 
             rb.velocity.y == 0f)
         {
             RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 1f);
@@ -96,39 +112,38 @@ public class MainActor : MonoBehaviour
             {
                 isJumping = false;
                 islanding = true;
-                ResetPowerBar();
+                reset_powerBar(); 
             }
         }
     }
 
-    private void CountFloor()
-    {
-        int nowPos = Mathf.FloorToInt(transform.position.y);
-        if (nowPos > cntFloorCertification)
+    private void cnt_floor(){
+        int now_pos = Mathf.FloorToInt(transform.position.y);
+        if (now_pos > cnt_floor_certification)
         {
-            maxFloor += 1;
-            cntFloorCertification += 3;
-            textMeshPro.text = maxFloor.ToString("D4") + "F";
+            max_floor += 1;
+            cnt_floor_certification += 3;
+            textMeshPro.text = max_floor.ToString("D4") + "F";
         }
     }
 
-    private void UpdatePowerBar(float pressTime_)
+    private void update_powerBar(float pressTime_)
     {
-        int L = powerBar.transform.childCount;
+        int L = power_bar.transform.childCount;
         int activateCount = Mathf.FloorToInt(pressTime_ / 0.25f);
 
         for (int i = 0; i < L; i++)
         {
-            powerBar.transform.GetChild(i).gameObject.SetActive(i < activateCount);
+            power_bar.transform.GetChild(i).gameObject.SetActive(i < activateCount);
         }
     }
 
-    private void ResetPowerBar()
+    private void reset_powerBar()
     {
-        int L = powerBar.transform.childCount;
+        int L = power_bar.transform.childCount;
         for (int i = 0; i < L; i++)
         {
-            powerBar.transform.GetChild(i).gameObject.SetActive(false);
+            power_bar.transform.GetChild(i).gameObject.SetActive(false);
         }
     }
 }
