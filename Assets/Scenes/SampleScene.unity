@@ -2369,11 +2369,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 1
   max_floor: 0
+  cnt_floor_certification: 5
   downTime: 0
   upTime: 0
   pressTime: 0
   jumpForce: 5
   power_bar: {fileID: 1579908483}
+  textMeshPro: {fileID: 1631392142}
 --- !u!212 &1416235175
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -2668,7 +2670,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 583, y: 388.17}
+  m_AnchoredPosition: {x: 561, y: 405.14}
   m_SizeDelta: {x: 493.9103, y: 183.2845}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1442437707
@@ -2691,7 +2693,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'NS_TOWER
+  m_text: 'NS-TOWER
 
 '
   m_isRightToLeft: 0
@@ -2720,8 +2722,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 70
-  m_fontSizeBase: 70
+  m_fontSize: 80
+  m_fontSizeBase: 80
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -2960,8 +2962,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 142, y: 491}
-  m_SizeDelta: {x: 115.3332, y: 148.28}
+  m_AnchoredPosition: {x: 85.778, y: 480.64}
+  m_SizeDelta: {x: 500.5336, y: 148.28}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1631392142
 MonoBehaviour:
@@ -2983,10 +2985,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: F
+  m_text: 0000F
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 138dedcc984308f4e8b8226baa3e8042, type: 2}
-  m_sharedMaterial: {fileID: 7714040863227205777, guid: 138dedcc984308f4e8b8226baa3e8042, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3010,15 +3012,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 150
-  m_fontSizeBase: 150
+  m_fontSize: 120
+  m_fontSizeBase: 120
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 3
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 4096
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0

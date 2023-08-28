@@ -1,36 +1,36 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
-// 0.8597
-// 8.5774
-
-
-public class main_actor : MonoBehaviour
+public class MainActor : MonoBehaviour
 {
-    public float moveSpeed = 1f;              // 移動速度
+    [SerializeField] private float moveSpeed = 1f;              
+    [SerializeField] private int cntFloorCertification = 0;   
+    [SerializeField] private float jumpForce = 5f;             
+    [SerializeField] private GameObject powerBar;
+    [SerializeField] private TextMeshProUGUI textMeshPro;
 
-    public int max_floor = 0;    
-    public float downTime, upTime, pressTime = 0;
-    public float jumpForce = 5f;              // 起始跳躍力量
-    private int moveDirection = 1;            // 移動方向，1代表向右，-1代表向左
-    private bool isJumping = false;           // 是否正在跳躍 Ready
+    private int maxFloor = 0; 
+    private float downTime, upTime, pressTime = 0;
+    private int moveDirection = 1;            
+    private bool isJumping = false;           
     private bool islanding = true; 
-    private SpriteRenderer spriteRenderer;    // SpriteRenderer組件
-    private Rigidbody2D rb;                   // Rigidbody2D組件
+    private SpriteRenderer spriteRenderer;    
+    private Rigidbody2D rb;                   
     private float currentPressTime = 0;
-    [SerializeField] private GameObject power_bar;
-    
 
-    void Start(){
+    private void Start()
+    {
         spriteRenderer = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
         Camera mainCamera = Camera.main;
-        Main_camera cameraFollow = mainCamera.GetComponent<Main_camera>();
+        MainCamera cameraFollow = mainCamera.GetComponent<MainCamera>();
         cameraFollow.target = transform;
     }
 
-    void Update(){   
+    private void Update()
+    {   
         float currentSpeed = moveSpeed;
         if (Input.GetKey(KeyCode.Space))
         {
@@ -39,7 +39,6 @@ public class main_actor : MonoBehaviour
         float movement = moveDirection * currentSpeed * Time.deltaTime;
         transform.Translate(movement, 0f, 0f);
 
-        // 處理跳躍
         if (Input.GetKeyDown(KeyCode.Space) && !isJumping && islanding)
         {
             downTime = Time.time;
@@ -50,7 +49,7 @@ public class main_actor : MonoBehaviour
         if (Input.GetKey(KeyCode.Space) && islanding)
         {
             currentPressTime += Time.deltaTime;
-            update_powerBar(currentPressTime);
+            UpdatePowerBar(currentPressTime);
         }
 
         if (Input.GetKeyUp(KeyCode.Space) && islanding)
@@ -62,28 +61,33 @@ public class main_actor : MonoBehaviour
             isJumping = false;
             StartJump();
         }
+        CountFloor();
     }
 
-    private void StartJump(){
+    private void StartJump()
+    {
         rb.velocity = new Vector2(rb.velocity.x, jumpForce + pressTime * 2f);
         islanding = false;
         pressTime = 0;
         jumpForce = 5f;
     }
 
-    private void OnCollisionEnter2D(Collision2D collision){
-        if (collision.gameObject.CompareTag("right_border")){
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("right_border"))
+        {
             moveDirection = -1;
             spriteRenderer.flipX = true;
         }
-        else if(collision.gameObject.CompareTag("left_border")){
+        else if (collision.gameObject.CompareTag("left_border"))
+        {
             moveDirection = 1;
             spriteRenderer.flipX = false;
         }
 
-        if (collision.gameObject.CompareTag("floor") || 
-            collision.gameObject.CompareTag("stair") || 
-            collision.gameObject.CompareTag("acc_stair") && 
+        if ((collision.gameObject.CompareTag("floor") || 
+             collision.gameObject.CompareTag("stair") || 
+             collision.gameObject.CompareTag("acc_stair")) && 
             rb.velocity.y == 0f)
         {
             RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 1f);
@@ -92,34 +96,39 @@ public class main_actor : MonoBehaviour
             {
                 isJumping = false;
                 islanding = true;
-                reset_powerBar(); // 重置power_bar
+                ResetPowerBar();
             }
         }
     }
 
-    private void cnt_floor(){
-        int now_pos = Mathf.FloorToInt(transform.position.y);
-        if (now_pos > max_floor)
-            max_floor = now_pos;
+    private void CountFloor()
+    {
+        int nowPos = Mathf.FloorToInt(transform.position.y);
+        if (nowPos > cntFloorCertification)
+        {
+            maxFloor += 1;
+            cntFloorCertification += 3;
+            textMeshPro.text = maxFloor.ToString("D4") + "F";
+        }
     }
 
-    private void update_powerBar(float pressTime_)
+    private void UpdatePowerBar(float pressTime_)
     {
-        int L = power_bar.transform.childCount;
+        int L = powerBar.transform.childCount;
         int activateCount = Mathf.FloorToInt(pressTime_ / 0.25f);
 
         for (int i = 0; i < L; i++)
         {
-            power_bar.transform.GetChild(i).gameObject.SetActive(i < activateCount);
+            powerBar.transform.GetChild(i).gameObject.SetActive(i < activateCount);
         }
     }
 
-    private void reset_powerBar()
+    private void ResetPowerBar()
     {
-        int L = power_bar.transform.childCount;
+        int L = powerBar.transform.childCount;
         for (int i = 0; i < L; i++)
         {
-            power_bar.transform.GetChild(i).gameObject.SetActive(false);
+            powerBar.transform.GetChild(i).gameObject.SetActive(false);
         }
     }
 }
