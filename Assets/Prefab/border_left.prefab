@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6916011132292471218}
   m_Layer: 0
   m_Name: border_left
-  m_TagString: border
+  m_TagString: left_border
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

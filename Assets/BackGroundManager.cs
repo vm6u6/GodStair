@@ -13,7 +13,7 @@ public class BackGroundManager : MonoBehaviour
 
     public void SpawnBackground(float y)
     {
-        Debug.Log(y);
+        //Debug.Log(y);
 
         if (BackGroundPrefabs[0] == null || BackGroundPrefabs[1] == null || BackGroundPrefabs[2] == null)
         {

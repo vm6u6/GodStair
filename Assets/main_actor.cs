@@ -8,9 +8,9 @@ using UnityEngine;
 
 public class main_actor : MonoBehaviour
 {
-    public float moveSpeed = 0.2f;            // 移動速度
+    public float moveSpeed = 1f;              // 移動速度
+
     public int max_floor = 0;    
-    public float jumpHoldDuration = 0.5f;     // 按住空白鍵的最大持續時間   
     public float downTime, upTime, pressTime = 0;
     public float jumpForce = 5f;              // 起始跳躍力量
     private int moveDirection = 1;            // 移動方向，1代表向右，-1代表向左
@@ -18,85 +18,73 @@ public class main_actor : MonoBehaviour
     private bool islanding = true; 
     private SpriteRenderer spriteRenderer;    // SpriteRenderer組件
     private Rigidbody2D rb;                   // Rigidbody2D組件
+    private float currentPressTime = 0;
     [SerializeField] private GameObject power_bar;
     
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-        // 獲取SpriteRenderer和Rigidbody2D組件
+
+    void Start(){
         spriteRenderer = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
-
         Camera mainCamera = Camera.main;
-
-        // 获取相机跟随脚本组件
         Main_camera cameraFollow = mainCamera.GetComponent<Main_camera>();
-
-        // 设置相机跟随的目标为角色对象
         cameraFollow.target = transform;
     }
 
-    // Update is called once per frame
-    void Update()
-    {   
-        // 計算移動的位移
-        float movement = moveDirection * moveSpeed * Time.deltaTime;
-
-        // 更新角色位置
+    void Update(){   
+        float currentSpeed = moveSpeed;
+        if (Input.GetKey(KeyCode.Space))
+        {
+            currentSpeed *= 0.6f;
+        }
+        float movement = moveDirection * currentSpeed * Time.deltaTime;
         transform.Translate(movement, 0f, 0f);
-
-        // 檢查是否超出邊界
-        if (transform.position.x < -5.0f )  // 超出左邊界
-        {
-            moveDirection = 1; // 改變移動方向為向右
-        }
-        else if (transform.position.x > 2.3f )  // 超出右邊界
-        {
-            moveDirection = -1; // 改變移動方向為向左
-        }
-
-        // 根據水平輸入翻轉圖片
-        if (moveDirection > 0)
-        {
-            spriteRenderer.flipX = false; // 不翻轉圖片
-        }
-        else if (moveDirection < 0)
-        {
-            spriteRenderer.flipX = true; // 翻轉圖片
-        }
 
         // 處理跳躍
         if (Input.GetKeyDown(KeyCode.Space) && !isJumping && islanding)
         {
             downTime = Time.time;
+            currentPressTime = 0;
             isJumping = true;
+        }
+
+        if (Input.GetKey(KeyCode.Space) && islanding)
+        {
+            currentPressTime += Time.deltaTime;
+            update_powerBar(currentPressTime);
         }
 
         if (Input.GetKeyUp(KeyCode.Space) && islanding)
         {
             upTime = Time.time;
             pressTime = upTime - downTime;
-            if (pressTime > 10)
-                pressTime = 10;
+            if (pressTime > 3)
+                pressTime = 3;
             isJumping = false;
             StartJump();
         }
     }
 
-    // 開始跳躍
-    private void StartJump()
-    {
+    private void StartJump(){
         rb.velocity = new Vector2(rb.velocity.x, jumpForce + pressTime * 2f);
         islanding = false;
         pressTime = 0;
         jumpForce = 5f;
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        // 防止空中跳躍，挑一次後要碰到下一個物體才能再跳
-        if (collision.gameObject.CompareTag("floor") || collision.gameObject.CompareTag("stair") || collision.gameObject.CompareTag("acc_stair") && rb.velocity.y == 0f)
+    private void OnCollisionEnter2D(Collision2D collision){
+        if (collision.gameObject.CompareTag("right_border")){
+            moveDirection = -1;
+            spriteRenderer.flipX = true;
+        }
+        else if(collision.gameObject.CompareTag("left_border")){
+            moveDirection = 1;
+            spriteRenderer.flipX = false;
+        }
+
+        if (collision.gameObject.CompareTag("floor") || 
+            collision.gameObject.CompareTag("stair") || 
+            collision.gameObject.CompareTag("acc_stair") && 
+            rb.velocity.y == 0f)
         {
             RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 1f);
 
@@ -104,6 +92,7 @@ public class main_actor : MonoBehaviour
             {
                 isJumping = false;
                 islanding = true;
+                reset_powerBar(); // 重置power_bar
             }
         }
     }
@@ -114,8 +103,23 @@ public class main_actor : MonoBehaviour
             max_floor = now_pos;
     }
 
-    // private void update_powerBar(){
-    //     int L = power_bar.transform.childCOunt;
+    private void update_powerBar(float pressTime_)
+    {
+        int L = power_bar.transform.childCount;
+        int activateCount = Mathf.FloorToInt(pressTime_ / 0.25f);
 
-    // }
+        for (int i = 0; i < L; i++)
+        {
+            power_bar.transform.GetChild(i).gameObject.SetActive(i < activateCount);
+        }
+    }
+
+    private void reset_powerBar()
+    {
+        int L = power_bar.transform.childCount;
+        for (int i = 0; i < L; i++)
+        {
+            power_bar.transform.GetChild(i).gameObject.SetActive(false);
+        }
+    }
 }
