@@ -2,18 +2,50 @@ using UnityEngine;
 
 public class Main_camera : MonoBehaviour
 {
-    public Transform target;  // 要跟随的目标对象
-    public Vector2 offset;  // 相机和角色之间的偏移量
+    public Transform target;  
+    private float distance = 3.8f + -2.151625f;
 
-    void LateUpdate()
+
+    void LateUpdate() 
     {
-        // 计算相机的目标位置
-        Vector3 desiredPosition = new Vector3(transform.position.x, 3.8f + target.position.y + offset.y, transform.position.z);
+        Vector3 desiredPosition = new Vector3(transform.position.x, distance, transform.position.z);
 
-        // // 使用平滑插值过渡到目标位置
-        // Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
+        if(target.position.y >= distance + 1.0f) 
+        {
+            distance += target.position.y - distance - 1.0f; 
+        }
 
-        // 更新相机的位置
-        transform.position =  desiredPosition;
+        transform.position = desiredPosition;
     }
 }
+
+
+
+
+
+// [20230831] Previous version___________________________________________
+
+// public class Main_camera : MonoBehaviour
+// {
+//     public Transform target;  
+//     public Vector2 offset;  
+//     private float distance = 3.8f;
+
+//     void LateUpdate()
+//     { 
+//         // if (target.position.y >= 1 && distance < 4.8){
+//         //     distance = distance + 0.0001f;
+//         //     Vector3 desiredPosition = new Vector3(transform.position.x, distance + target.position.y + offset.y, transform.position.z);
+//         //     transform.position = desiredPosition;
+            
+//         // }
+//         // else{
+//         //     Vector3 desiredPosition = new Vector3(transform.position.x, distance + target.position.y + offset.y, transform.position.z);
+//         //     transform.position = desiredPosition;
+//         // }
+//         // Debug.Log(distance);
+
+//         Vector3 desiredPosition = new Vector3(transform.position.x, distance + target.position.y + offset.y, transform.position.z);
+//         transform.position = desiredPosition;
+//     }
+// }

@@ -7,7 +7,7 @@ public class Background : MonoBehaviour
 {
     private Transform mainActorTransform;
     private float updateInterval = 7.7177f;
-    private float destroyThreshold = 7.7177f;
+    private float destroyThreshold = 7.7177f * 2;
     private bool canUpdateBackground = true;
     private float lastUpdatedY_Background = 0.0f;
 

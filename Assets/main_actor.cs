@@ -14,7 +14,7 @@ public class main_actor : MonoBehaviour
 
     private float moveSpeed = 1.5f;              
     private int max_floor = 0; 
-    private int cnt_floor_certification = 0;   
+    private float cnt_floor_certification = 0.0f;   
     private int activateCount = 0;
     private float jumpForce = 5f;              
     private int moveDirection = 1;            
@@ -26,6 +26,7 @@ public class main_actor : MonoBehaviour
     private float timeOnGround_start = 0f;
     private float timeOnGround_end = 0f;
     private float overJumpingTime = 0.3f;
+    private float endGame_Line = 0.8597f - 7.7177f;
 
     
 
@@ -35,6 +36,7 @@ public class main_actor : MonoBehaviour
         Camera mainCamera = Camera.main;
         Main_camera cameraFollow = mainCamera.GetComponent<Main_camera>();
         cameraFollow.target = transform;
+
     }
 
     void Update(){   
@@ -71,11 +73,20 @@ public class main_actor : MonoBehaviour
         }
         
         cnt_floor();
+        EndGmae();
+    }
+
+    private void EndGmae(){
+        // Debug.Log(transform.position.y);
+        // Debug.Log("END " + endGame_Line);
+        if (transform.position.y < endGame_Line){
+            Time.timeScale = 0;
+        }
     }
 
     private void StartJump(){
-        Debug.Log(activateCount);
-        rb.velocity = new Vector2(rb.velocity.x, jumpForce + activateCount / 2);
+        //Debug.Log(activateCount);
+        rb.velocity = new Vector2(rb.velocity.x, jumpForce + activateCount / 4);
         islanding = false;
         jumpForce = 5f;
         activateCount = 0;
@@ -113,10 +124,11 @@ public class main_actor : MonoBehaviour
         if (now_pos > cnt_floor_certification)
         {
             max_floor += 1;
-            cnt_floor_certification += 3;
+            cnt_floor_certification += 7.7177f/2;
             textMeshPro.text = max_floor.ToString("D4") + "F";
 
             moveSpeed += 0.2f;
+            endGame_Line += 7.7177f/2;
         }
     }
 

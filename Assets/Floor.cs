@@ -7,7 +7,7 @@ public class Floor : MonoBehaviour
     private List<float> lastUpdatedY_stairs = new List<float>();    // 儲存樓梯的Y軸位置
     private Transform mainActorTransform;
     private float updateInterval = 7.7177f;
-    private float destroyThreshold = 10.0f;
+    private float destroyThreshold = 7.7177f * 2;
     private bool canUpdateStairs = true;
 
     int cnt_floor_num = 0; 
