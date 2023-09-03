@@ -7,3 +7,4 @@
 2. multi-charactor
 3. add some props
 4. Adjust art style
+5. Darkmode
