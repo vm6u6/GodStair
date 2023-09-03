@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Floor : MonoBehaviour
 {
-    private List<float> lastUpdatedY_stairs = new List<float>();    // 儲存樓梯的Y軸位置
+    private List<float> lastUpdatedY_stairs = new List<float>();    
     private Transform mainActorTransform;
     private float updateInterval = 7.7177f;
     private float destroyThreshold = 7.7177f * 2;
@@ -17,8 +17,7 @@ public class Floor : MonoBehaviour
     {
         mainActorTransform = GameObject.Find("main_actor").transform;
 
-        // 初始化樓梯的Y軸位置
-        for (int i = -1; i < 5; i++)
+        for (int i = -2; i < 5; i++)
         {
             lastUpdatedY_stairs.Add(i);
         }
@@ -27,27 +26,28 @@ public class Floor : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (cnt_floor_num >= lastUpdatedY_stairs.Count)  // 使用>=是更安全的，以防止索引超出範圍
-            cnt_floor_num = 0;
+        if (cnt_floor_num >= lastUpdatedY_stairs.Count) 
+        cnt_floor_num = 0;
 
         // Debug.Log(mainActorTransform.position.y);   
         // Debug.Log(cnt_floor_num);
         if (mainActorTransform.position.y - lastUpdatedY_stairs[cnt_floor_num] >= -2 && gameObject.tag == "stair" && canUpdateStairs)
         {
             //Debug.Log("update Stairs...");
-            transform.parent.GetComponent<FloorManager>().SpawnFloor(lastUpdatedY_stairs[cnt_floor_num]);
             lastUpdatedY_stairs[cnt_floor_num] += updateInterval;
+            transform.parent.GetComponent<FloorManager>().SpawnFloor(lastUpdatedY_stairs[cnt_floor_num]);
             cnt_floor_num++;
-            canUpdateStairs = false;  // 關閉更新樓梯的機會，直到玩家遠離該位置
+            canUpdateStairs = false;  
         }
         else if (mainActorTransform.position.y - lastUpdatedY_stairs[cnt_floor_num] < -2 || mainActorTransform.position.y - lastUpdatedY_stairs[cnt_floor_num] > 0)
         {
-            canUpdateStairs = true;  // 當玩家遠離-2的距離時，重新開啟更新樓梯的機會
+            canUpdateStairs = true;  
         }
 
         if (mainActorTransform.position.y - transform.position.y > destroyThreshold)
         {
             Destroy(gameObject);
         }
+        
     }
 }

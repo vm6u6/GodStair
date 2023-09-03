@@ -9,6 +9,14 @@ public class FloorManager : MonoBehaviour
     float floor_Width = 1.4f;
     // 使用HashSet存儲已生成物體的Y軸座標
     private HashSet<float> generatedYPositions = new HashSet<float>();
+
+
+    public void Start(){
+        for (float i = -2.0f; i < 5.0f; i++)
+        {
+            SpawnFloor(i);
+        }
+    }
     
     public void SpawnFloor(float position)
     {
@@ -49,7 +57,7 @@ public class FloorManager : MonoBehaviour
                 if (attempts <= 10)
                 {
                     usedPositions.Add(xPos);
-                    floor.transform.position = new Vector3(xPos, position + 6f);
+                    floor.transform.position = new Vector3(xPos, position);
                 }
             }
 
