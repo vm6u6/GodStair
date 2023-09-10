@@ -12,6 +12,12 @@ public class main_actor : MonoBehaviour
     [SerializeField] private GameObject pauseButton;
     [SerializeField] private GameObject abortButton;
     [SerializeField] private GameObject pauseLab;
+    [SerializeField] private GameObject pannel;
+    [SerializeField] private GameObject font;
+    [SerializeField] private GameObject end;
+    [SerializeField] private GameObject regist;
+    [SerializeField] private GameObject level;
+    [SerializeField] private GameObject start_game;
 
     private float moveSpeed = 1.5f;              
     private int max_floor = 0; 
@@ -26,21 +32,21 @@ public class main_actor : MonoBehaviour
     private float currentPressTime = 0;
     private float timeOnGround_start = 0f;
     private float timeOnGround_end = 0f;
-    private float overJumpingTime = 0.1f;
+    private float overJumpingTime = 0.2f;
     private float endGame_Line = - 7.7177f;
-    private float fallMutiplier = 2.0f;
+    // private float fallMutiplier = 2.0f;
     // private float lowJumpMutiplier = 2.5f;
     private bool pause_init = true;
 
     
 
     void Start(){
+        Time.timeScale = 0;
         spriteRenderer = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
         Camera mainCamera = Camera.main;
         Main_camera cameraFollow = mainCamera.GetComponent<Main_camera>();
         cameraFollow.target = transform;
-
     }
 
     void Update(){  
@@ -61,14 +67,16 @@ public class main_actor : MonoBehaviour
         transform.Translate(movement, 0f, 0f);
 
         // { Jumping }_________________________________________________________________________
+        
+
         if (rb.velocity.y == 0f){
-            Debug.Log("000");
             timeOnGround_end = Time.time;
             if (timeOnGround_end - timeOnGround_start > overJumpingTime){
-                 if (Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0) && islanding ){
+                if (Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0) && islanding ){
                     currentPressTime += Time.deltaTime;
                     update_powerBar(currentPressTime);
                 }
+                
                 if (Input.GetKeyDown(KeyCode.Space)  || Input.GetMouseButtonDown(0) && !isJumping && islanding){
                     isJumping = true;
                 }
@@ -79,14 +87,14 @@ public class main_actor : MonoBehaviour
                 }
             }
         }
-        if (rb.velocity.y < 0){
-            Debug.Log("Down");
-            rb.velocity += Vector2.up * Physics2D.gravity.y * (fallMutiplier - 1) * Time.deltaTime;
-        }
-        if (rb.velocity.y > 0){
-            Debug.Log("Up");
-            // TODO 補上跳躍物理引擎
-        }
+        // if (rb.velocity.y < 0){
+        //     Debug.Log("Down");
+        //     rb.velocity += Vector2.up * Physics2D.gravity.y * (fallMutiplier - 1) * Time.deltaTime;
+        // }
+        // if (rb.velocity.y > 0){
+        //     Debug.Log("Up");
+        //     // TODO 補上跳躍物理引擎
+        // }
         cnt_floor();
         EndGmae();
     }
@@ -95,9 +103,15 @@ public class main_actor : MonoBehaviour
         // Debug.Log(transform.position.y);
         if (transform.position.y < endGame_Line){
             Time.timeScale = 0;
+            pannel.SetActive(true);
+            font.SetActive(true);
+            end.SetActive(true);
+            regist.SetActive(true);
+            level.SetActive(true);
+            start_game.SetActive(true);
+            SceneManager.LoadScene(0);
         }
     }
-
 
     private void StartJump(){
         //Debug.Log(activateCount);
@@ -181,5 +195,27 @@ public class main_actor : MonoBehaviour
             Time.timeScale = 1;
             pause_init = true;
         }
+    }
+
+    public void abort(){
+        Time.timeScale = 0;
+        SceneManager.LoadScene(0);
+
+        pannel.SetActive(true);
+        font.SetActive(true);
+        end.SetActive(true);
+        regist.SetActive(true);
+        level.SetActive(true);
+        start_game.SetActive(true);
+    }
+
+    public void start_gmae(){
+        Time.timeScale = 1;
+        pannel.SetActive(false);
+        font.SetActive(false);
+        end.SetActive(false);
+        regist.SetActive(false);
+        level.SetActive(false);
+        start_game.SetActive(false);
     }
 }
