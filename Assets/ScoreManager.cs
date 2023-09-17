@@ -6,44 +6,25 @@ using System.Linq;
 
 public class ScoreManager : MonoBehaviour
 {
-    private string dataFilePath = "gameData.json";
-    private Dictionary<string, int> gameData = new Dictionary<string, int>();
+    private string dataFilePath = "Assets/gameDataRecord.txt"; // Corrected file path
     [SerializeField] private TextMeshProUGUI textMeshPro_score;
-    private int highestValue = 0;
+    private int best = 0;
+    private int score = 0;
+    private main_actor MainScript;
 
-    private void Start()
-    {
-        LoadGameData();
+
+    void Start(){
+       MainScript = FindObjectOfType<main_actor>();
+       best = int.Parse(File.ReadAllText(dataFilePath));
     }
 
-
-    public void SaveGameData(int floor_cnt)
-    {
-        string key = "Floor_" + floor_cnt;
-        gameData[key] = floor_cnt;
-
-        var sortedData = gameData.OrderByDescending(kv => kv.Value).ToDictionary(kv => kv.Key, kv => kv.Value);
-
-        string json = JsonUtility.ToJson(gameData);
-        File.WriteAllText(dataFilePath, json);
-    }
-
-    public void LoadGameData()
-    {
-        if (File.Exists(dataFilePath))
+    void Update(){
+        score = MainScript.max_floor;
+        if (score > best)
         {
-            string json = File.ReadAllText(dataFilePath);
-            gameData = JsonUtility.FromJson<Dictionary<string, int>>(json);
-
-            
-            foreach (var kvp in gameData)
-            {
-                if (kvp.Value > highestValue)
-                {
-                    highestValue = kvp.Value;
-                }
-            }
+            best = score;
+            File.WriteAllText(dataFilePath, best.ToString());
         }
-        textMeshPro_score.text = highestValue.ToString("D4") + "F";
+        textMeshPro_score.text = best.ToString("D4") + "F";
     }
 }

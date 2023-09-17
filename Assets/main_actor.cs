@@ -20,7 +20,7 @@ public class main_actor : MonoBehaviour
     [SerializeField] private GameObject start_game;
 
     private float moveSpeed = 1.5f;              
-    private int max_floor = 0; 
+    public int max_floor = 0; 
     private float cnt_floor_certification = 0.0f;   
     private int activateCount = 0;
     private float jumpForce = 5f;              
