@@ -14,10 +14,48 @@ public class FloorManager : MonoBehaviour
     public void click_trigger(){
         for (float i = -2.0f; i < 5.0f; i++)
         {
+            
             SpawnFloor_entry(i);
         }
     }
-    
+
+    public void SpawnFloor_medium(float position)
+    {
+        if (generatedYPositions.Contains(position))
+        {
+            return;
+        }
+
+        generatedYPositions.Add(position);
+        List<float> usedPositions = new List<float>();
+        int numOfFloorsThisLevel = Random.Range(1, 4);
+        if (numOfFloorsThisLevel > 0)
+            for (int j = 0; j < numOfFloorsThisLevel; j++)
+            {
+                int randomValue = Random.Range(0, 6);
+                GameObject floor = Instantiate(FloorPrefabs[randomValue], transform);
+                float xPos;
+                int attempts = 0;
+                
+                do
+                {
+                    xPos = Random.Range(-5.35f + floor_Width / 2, 2.4f - floor_Width / 2);
+                    attempts++;
+                    
+                    if (attempts > 10)
+                        break;
+                } 
+                while (IsOverlap(usedPositions, xPos));
+                
+                if (attempts <= 10)
+                {
+                    usedPositions.Add(xPos);
+                    floor.transform.position = new Vector3(xPos, position);
+                }
+            }
+
+        usedPositions.Clear();
+    }
     public void SpawnFloor_entry(float position)
     {
         if (FloorPrefabs[0] == null)
@@ -26,17 +64,16 @@ public class FloorManager : MonoBehaviour
             return;
         }
 
-        // 檢查這個Y軸座標是否已存在於HashSet中
+
         if (generatedYPositions.Contains(position))
         {
             return;
         }
 
-        // 將這個Y軸座標添加到HashSet中
         generatedYPositions.Add(position);
 
         List<float> usedPositions = new List<float>();
-        int numOfFloorsThisLevel = Random.Range(1, 3);
+        int numOfFloorsThisLevel = Random.Range(1, 4);
         if (numOfFloorsThisLevel > 0)
             for (int j = 0; j < numOfFloorsThisLevel; j++)
             {
