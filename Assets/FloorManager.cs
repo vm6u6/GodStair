@@ -11,14 +11,14 @@ public class FloorManager : MonoBehaviour
     private HashSet<float> generatedYPositions = new HashSet<float>();
 
 
-    public void Start(){
+    public void click_trigger(){
         for (float i = -2.0f; i < 5.0f; i++)
         {
-            SpawnFloor(i);
+            SpawnFloor_entry(i);
         }
     }
     
-    public void SpawnFloor(float position)
+    public void SpawnFloor_entry(float position)
     {
         if (FloorPrefabs[0] == null)
         {
