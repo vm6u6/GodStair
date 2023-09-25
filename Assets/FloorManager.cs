@@ -9,13 +9,26 @@ public class FloorManager : MonoBehaviour
     float floor_Width = 1.4f;
     // 使用HashSet存儲已生成物體的Y軸座標
     private HashSet<float> generatedYPositions = new HashSet<float>();
+    //private int levelOptionCnt = 0;
 
-
+    // Initial the floor
     public void click_trigger(){
-        for (float i = -2.0f; i < 5.0f; i++)
-        {
-            
-            SpawnFloor_entry(i);
+        LevelManager levelManager = FindObjectOfType<LevelManager>();
+        if (levelManager != null){
+            int levelOptionCnt = levelManager.level_option_cnt;
+            Debug.Log("level_option_cnt: " + levelOptionCnt);
+
+            for (float i = -2.0f; i < 5.0f; i++)
+            {
+                Debug.Log("level_option_cnt: " + levelOptionCnt);
+                if (levelOptionCnt == 0){
+                    SpawnFloor_entry(i);
+                }
+                else if(levelOptionCnt == 1){
+                    SpawnFloor_medium(i);
+                }
+                
+            }
         }
     }
 
@@ -32,7 +45,7 @@ public class FloorManager : MonoBehaviour
         if (numOfFloorsThisLevel > 0)
             for (int j = 0; j < numOfFloorsThisLevel; j++)
             {
-                int randomValue = Random.Range(0, 6);
+                int randomValue = Random.Range(0, 3);
                 GameObject floor = Instantiate(FloorPrefabs[randomValue], transform);
                 float xPos;
                 int attempts = 0;

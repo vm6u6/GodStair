@@ -14,7 +14,7 @@ public class Background : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("Background Start method called!");
+        //Debug.Log("Background Start method called!");
         mainActorTransform = GameObject.Find("main_actor").transform;
     }
 

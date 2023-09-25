@@ -21,6 +21,7 @@ public class Floor : MonoBehaviour
         {
             lastUpdatedY_stairs.Add(i);
         }
+
     }
 
     // Update is called once per frame
@@ -35,7 +36,7 @@ public class Floor : MonoBehaviour
         {
             //Debug.Log("update Stairs...");
             lastUpdatedY_stairs[cnt_floor_num] += updateInterval;
-            transform.parent.GetComponent<FloorManager>().SpawnFloor(lastUpdatedY_stairs[cnt_floor_num]);
+            transform.parent.GetComponent<FloorManager>().SpawnFloor_entry(lastUpdatedY_stairs[cnt_floor_num]);
             cnt_floor_num++;
             canUpdateStairs = false;  
         }
