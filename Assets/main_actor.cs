@@ -37,6 +37,7 @@ public class main_actor : MonoBehaviour
     // private float fallMutiplier = 2.0f;
     // private float lowJumpMutiplier = 2.5f;
     private bool pause_init = true;
+    private int floor_type = 0; // {0: normal, 1: jump, 2:acc}
 
     
 
@@ -115,10 +116,25 @@ public class main_actor : MonoBehaviour
 
     private void StartJump(){
         //Debug.Log(activateCount);
-        rb.velocity = new Vector2(rb.velocity.x, (jumpForce + activateCount / 4)) ;
-        islanding = false;
-        jumpForce = 5f;
-        activateCount = 0;
+        if (floor_type == 0){
+            rb.velocity = new Vector2(rb.velocity.x, (jumpForce + activateCount / 4)) ;
+            islanding = false;
+            jumpForce = 5f;
+            activateCount = 0;
+
+        }else if (floor_type == 1){
+            rb.velocity = new Vector2(rb.velocity.x, (jumpForce + activateCount / 2)) ;
+            islanding = false;
+            jumpForce = 5f;
+            activateCount = 0;
+
+        }else if (floor_type == 2){
+            rb.velocity = new Vector2(rb.velocity.x, (jumpForce + activateCount / 4)) ;
+            islanding = false;
+            jumpForce = 5f;
+            activateCount = 0;
+        }
+
     }
 
     private void OnCollisionEnter2D(Collision2D collision){
@@ -131,8 +147,17 @@ public class main_actor : MonoBehaviour
             spriteRenderer.flipX = false;
         }
 
+        if (collision.gameObject.CompareTag("stair") || collision.gameObject.CompareTag("floor")){
+            floor_type = 0;
+        }else if(collision.gameObject.CompareTag("jump_stair")){
+            floor_type = 1;
+        }else if(collision.gameObject.CompareTag("acc_stair")){
+            floor_type = 2;
+        }
+
         if (collision.gameObject.CompareTag("floor") || 
             collision.gameObject.CompareTag("stair") || 
+            collision.gameObject.CompareTag("jump_stair") ||
             collision.gameObject.CompareTag("acc_stair") && 
             rb.velocity.y == 0f)
         {

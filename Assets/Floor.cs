@@ -9,14 +9,13 @@ public class Floor : MonoBehaviour
     private float updateInterval = 7.7177f;
     private float destroyThreshold = 7.7177f * 2;
     private bool canUpdateStairs = true;
-
-    int cnt_floor_num = 0; 
+    
+    private int cnt_floor_num = 0; 
 
     // Start is called before the first frame update
     void Start()
     {
         mainActorTransform = GameObject.Find("main_actor").transform;
-
         for (int i = -2; i < 5; i++)
         {
             lastUpdatedY_stairs.Add(i);
@@ -27,16 +26,24 @@ public class Floor : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        LevelManager levelManager = FindObjectOfType<LevelManager>();
+        int levelOptionCnt = levelManager.level_option_cnt;
         if (cnt_floor_num >= lastUpdatedY_stairs.Count) 
         cnt_floor_num = 0;
 
         // Debug.Log(mainActorTransform.position.y);   
         // Debug.Log(cnt_floor_num);
-        if (mainActorTransform.position.y - lastUpdatedY_stairs[cnt_floor_num] >= -2 && gameObject.tag == "stair" && canUpdateStairs)
+        if (mainActorTransform.position.y - lastUpdatedY_stairs[cnt_floor_num] >= -2 && canUpdateStairs)
         {
             //Debug.Log("update Stairs...");
             lastUpdatedY_stairs[cnt_floor_num] += updateInterval;
-            transform.parent.GetComponent<FloorManager>().SpawnFloor_entry(lastUpdatedY_stairs[cnt_floor_num]);
+            if (levelOptionCnt == 0){
+                transform.parent.GetComponent<FloorManager>().SpawnFloor_entry(lastUpdatedY_stairs[cnt_floor_num]);
+            }
+            else if (levelOptionCnt == 1){
+                 transform.parent.GetComponent<FloorManager>().SpawnFloor_medium(lastUpdatedY_stairs[cnt_floor_num]);
+            }
+            
             cnt_floor_num++;
             canUpdateStairs = false;  
         }

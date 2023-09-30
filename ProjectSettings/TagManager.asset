@@ -13,6 +13,7 @@ TagManager:
   - background
   - left_border
   - right_border
+  - jump_stair
   layers:
   - Default
   - TransparentFX
