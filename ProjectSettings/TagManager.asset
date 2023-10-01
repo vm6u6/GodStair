@@ -14,6 +14,8 @@ TagManager:
   - left_border
   - right_border
   - jump_stair
+  - acc_stair_left
+  - acc_stair_right
   layers:
   - Default
   - TransparentFX

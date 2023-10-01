@@ -45,7 +45,7 @@ public class FloorManager : MonoBehaviour
             for (int j = 0; j < numOfFloorsThisLevel; j++)
             {
                 int randomValue = Random.Range(0, 5);
-                Debug.Log(randomValue);
+                //Debug.Log(randomValue);
                 GameObject floor = Instantiate(FloorPrefabs[randomValue], transform);
                 float xPos;
                 int attempts = 0;

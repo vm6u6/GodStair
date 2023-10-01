@@ -32,7 +32,7 @@ public class main_actor : MonoBehaviour
     private float currentPressTime = 0;
     private float timeOnGround_start = 0f;
     private float timeOnGround_end = 0f;
-    private float overJumpingTime = 0.2f;
+    private float overJumpingTime = 0.1f;
     private float endGame_Line = - 7.7177f;
     // private float fallMutiplier = 2.0f;
     // private float lowJumpMutiplier = 2.5f;
@@ -68,8 +68,6 @@ public class main_actor : MonoBehaviour
         transform.Translate(movement, 0f, 0f);
 
         // { Jumping }_________________________________________________________________________
-        
-
         if (rb.velocity.y == 0f){
             timeOnGround_end = Time.time;
             if (timeOnGround_end - timeOnGround_start > overJumpingTime){
@@ -115,7 +113,7 @@ public class main_actor : MonoBehaviour
     }
 
     private void StartJump(){
-        //Debug.Log(activateCount);
+        Debug.Log("FLOOR" + floor_type);
         if (floor_type == 0){
             rb.velocity = new Vector2(rb.velocity.x, (jumpForce + activateCount / 4)) ;
             islanding = false;
@@ -123,7 +121,7 @@ public class main_actor : MonoBehaviour
             activateCount = 0;
 
         }else if (floor_type == 1){
-            rb.velocity = new Vector2(rb.velocity.x, (jumpForce + activateCount / 2)) ;
+            rb.velocity = new Vector2(rb.velocity.x, (jumpForce + activateCount)) ;
             islanding = false;
             jumpForce = 5f;
             activateCount = 0;
@@ -147,24 +145,25 @@ public class main_actor : MonoBehaviour
             spriteRenderer.flipX = false;
         }
 
-        if (collision.gameObject.CompareTag("stair") || collision.gameObject.CompareTag("floor")){
-            floor_type = 0;
-        }else if(collision.gameObject.CompareTag("jump_stair")){
-            floor_type = 1;
-        }else if(collision.gameObject.CompareTag("acc_stair")){
-            floor_type = 2;
-        }
-
         if (collision.gameObject.CompareTag("floor") || 
             collision.gameObject.CompareTag("stair") || 
             collision.gameObject.CompareTag("jump_stair") ||
-            collision.gameObject.CompareTag("acc_stair") && 
+            collision.gameObject.CompareTag("acc_stair_right") ||
+            collision.gameObject.CompareTag("acc_stair_left") && 
             rb.velocity.y == 0f)
         {
             timeOnGround_start = Time.time;
             RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 1f);
             if (hit.collider != null)
             {
+                if (collision.gameObject.CompareTag("floor") || collision.gameObject.CompareTag("stair")){
+                    floor_type = 0;
+                }else if (collision.gameObject.CompareTag("jump_stair")){
+                    floor_type = 1;
+                }
+                else if (collision.gameObject.CompareTag("acc_stair_right") || collision.gameObject.CompareTag("acc_stair_left")){
+                    floor_type = 2;
+                }
                 currentPressTime = 0;
                 isJumping = false;
                 islanding = true;
