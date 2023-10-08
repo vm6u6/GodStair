@@ -38,7 +38,7 @@ public class main_actor : MonoBehaviour
     // private float lowJumpMutiplier = 2.5f;
     private bool pause_init = true;
     private int floor_type = 0; // {0: normal, 1: jump, 2:acc}
-
+    private int acc_dir = 0; // 0:right , 1:left
     
 
     void Start(){
@@ -62,10 +62,28 @@ public class main_actor : MonoBehaviour
             if (Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0)){
                 currentSpeed *= 0.6f;
             }
+
+            if (floor_type == 2){
+                if (acc_dir == 1 && moveDirection == 1){
+                    currentSpeed *= 1.3f;
+                }
+                if (acc_dir == 1 && moveDirection == -1){
+                    currentSpeed *= 0.3f;
+                }
+                if (acc_dir == -1 && moveDirection == 1){
+                    currentSpeed *= 0.3f;
+                }
+                if (acc_dir == -1 && moveDirection == -1){
+                    currentSpeed *= 1.3f;
+                }
+            }
         }
+
+    
         
         float movement = moveDirection * currentSpeed * Time.deltaTime;
         transform.Translate(movement, 0f, 0f);
+
 
         // { Jumping }_________________________________________________________________________
         if (rb.velocity.y == 0f){
@@ -113,7 +131,7 @@ public class main_actor : MonoBehaviour
     }
 
     private void StartJump(){
-        Debug.Log("FLOOR" + floor_type);
+        // Debug.Log("FLOOR" + floor_type);
         if (floor_type == 0){
             rb.velocity = new Vector2(rb.velocity.x, (jumpForce + activateCount / 4)) ;
             islanding = false;
@@ -149,20 +167,33 @@ public class main_actor : MonoBehaviour
             collision.gameObject.CompareTag("stair") || 
             collision.gameObject.CompareTag("jump_stair") ||
             collision.gameObject.CompareTag("acc_stair_right") ||
-            collision.gameObject.CompareTag("acc_stair_left") && 
-            rb.velocity.y == 0f)
-        {
+            collision.gameObject.CompareTag("acc_stair_left") ){
+
             timeOnGround_start = Time.time;
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 1f);
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 0.8f);
+            Debug.Log(hit.collider.tag);
+        
             if (hit.collider != null)
             {
-                if (collision.gameObject.CompareTag("floor") || collision.gameObject.CompareTag("stair")){
-                    floor_type = 0;
-                }else if (collision.gameObject.CompareTag("jump_stair")){
-                    floor_type = 1;
-                }
-                else if (collision.gameObject.CompareTag("acc_stair_right") || collision.gameObject.CompareTag("acc_stair_left")){
-                    floor_type = 2;
+                Vector2 collisionNormal = hit.normal;
+                // Check if the collision normal is pointing upwards
+                if (collisionNormal == Vector2.up)
+                {
+                    Debug.Log( Vector2.up );
+                    Debug.Log("Collision detected with tag: " + collision.gameObject.tag);
+                    if (collision.gameObject.tag == "floor" || collision.gameObject.tag == "stair"){
+                        floor_type = 0;
+                    }else if (collision.gameObject.tag == "jump_stair"){
+                        floor_type = 1;
+                    }
+                    else if (collision.gameObject.tag == "acc_stair_right" || collision.gameObject.tag == "acc_stair_left"){
+                        if (collision.gameObject.tag == "acc_stair_right"){
+                            acc_dir = 1;
+                        }else{
+                            acc_dir = -1;
+                        }
+                        floor_type = 2;
+                    }
                 }
                 currentPressTime = 0;
                 isJumping = false;
