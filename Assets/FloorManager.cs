@@ -7,11 +7,14 @@ public class FloorManager : MonoBehaviour
 
     [SerializeField] GameObject[] FloorPrefabs;
     float floor_Width = 2f;
-    // 使用HashSet存儲已生成物體的Y軸座標
-    private HashSet<float> generatedYPositions = new HashSet<float>();
-    //private int levelOptionCnt = 0;
 
-    // Initial the floor
+    private HashSet<float> generatedYPositions = new HashSet<float>();
+    
+    private float probabilityThreshold = 0.5f; // Adjust this value as needed
+
+
+
+
     public void click_trigger(){
         LevelManager levelManager = FindObjectOfType<LevelManager>();
         if (levelManager != null){
@@ -27,8 +30,60 @@ public class FloorManager : MonoBehaviour
                 else if(levelOptionCnt == 1){
                     SpawnFloor_medium(i);
                 }
+                else if(levelOptionCnt == 2){
+                    SpawnFloor_hard(i);
+                }
             }
         }
+    }
+
+    public void SpawnFloor_hard(float position)
+    {
+        if (generatedYPositions.Contains(position))
+        {
+            return;
+        }
+
+        generatedYPositions.Add(position);
+        List<float> usedPositions = new List<float>();
+        int numOfFloorsThisLevel = Random.Range(1, 4);
+        if (numOfFloorsThisLevel > 0)
+            for (int j = 0; j < numOfFloorsThisLevel; j++)
+            {
+                float probability = Random.Range(0f, 1f);
+                bool isStatic = probability <= probabilityThreshold;
+
+                int randomValue = Random.Range(0, 5);
+                //Debug.Log(randomValue);
+                GameObject floor = Instantiate(FloorPrefabs[randomValue], transform);
+                float xPos;
+                int attempts = 0;
+                 
+                do
+                {
+                    xPos = Random.Range(-5.35f + floor_Width / 2, 2.4f - floor_Width / 2);
+                    attempts++;
+                    
+                    if (attempts > 10)
+                        break;
+                } 
+                while (IsOverlap(usedPositions, xPos));
+                
+                if (attempts <= 10)
+                {
+                    usedPositions.Add(xPos);
+                    floor.transform.position = new Vector3(xPos, position);
+                    if (isStatic){
+                        // pass
+                    }else{
+                        string ori_tag = floor.tag;
+                        string tag_pos = position.ToString();
+                        floor.tag = ori_tag + "_move";
+                    }
+                }
+            }
+
+        usedPositions.Clear();
     }
 
     public void SpawnFloor_medium(float position)
@@ -69,6 +124,7 @@ public class FloorManager : MonoBehaviour
 
         usedPositions.Clear();
     }
+    
     public void SpawnFloor_entry(float position)
     {
         if (FloorPrefabs[0] == null)

@@ -171,7 +171,7 @@ public class main_actor : MonoBehaviour
 
             timeOnGround_start = Time.time;
             RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 0.8f);
-            Debug.Log(hit.collider.tag);
+            // Debug.Log(hit.collider.tag);
         
             if (hit.collider != null)
             {
@@ -179,15 +179,18 @@ public class main_actor : MonoBehaviour
                 // Check if the collision normal is pointing upwards
                 if (collisionNormal == Vector2.up)
                 {
-                    Debug.Log( Vector2.up );
-                    Debug.Log("Collision detected with tag: " + collision.gameObject.tag);
+                    // Debug.Log( Vector2.up );
+                    // Debug.Log("Collision detected with tag: " + collision.gameObject.tag);
                     if (collision.gameObject.tag == "floor" || collision.gameObject.tag == "stair"){
                         floor_type = 0;
                     }else if (collision.gameObject.tag == "jump_stair"){
                         floor_type = 1;
                     }
-                    else if (collision.gameObject.tag == "acc_stair_right" || collision.gameObject.tag == "acc_stair_left"){
-                        if (collision.gameObject.tag == "acc_stair_right"){
+                    else if (collision.gameObject.tag == "acc_stair_right" ||     
+                             collision.gameObject.tag == "acc_stair_left" || 
+                             collision.gameObject.tag == "acc_stair_right_move" ||     
+                             collision.gameObject.tag == "acc_stair_left_move"){
+                        if (collision.gameObject.tag == "acc_stair_right" || collision.gameObject.tag == "acc_stair_right_move"){
                             acc_dir = 1;
                         }else{
                             acc_dir = -1;
