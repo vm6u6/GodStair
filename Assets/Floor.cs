@@ -13,7 +13,10 @@ public class Floor : MonoBehaviour
     
     private int cnt_floor_num = 0; 
     private char[] delimiter = { '_' };
-    private float ori_pos = 0;
+    public float moveSpeed = 0.5f;
+    private float originalY;
+    private float minY;
+    private float maxY;
 
     // Start is called before the first frame update
     void Start()
@@ -23,6 +26,9 @@ public class Floor : MonoBehaviour
         {
             lastUpdatedY_stairs.Add(i);
         }
+        originalY = transform.position.y;
+        minY = originalY;
+        maxY = originalY + 1.0f; 
     }
 
     // Update is called once per frame
@@ -65,7 +71,11 @@ public class Floor : MonoBehaviour
                 gameObject.tag == "jump_stair_move" || 
                 gameObject.tag == "acc_leftstair_move" || 
                 gameObject.tag == "acc_right_stair_move" ){
-                    // 計次移動 上下各五次
+                    
+                    float newY = Mathf.PingPong(Time.time * moveSpeed, maxY - minY) + minY;
+                    Vector3 newPosition = transform.position;
+                    newPosition.y = newY;
+                    transform.position = newPosition;
                 }
         }
 

@@ -167,7 +167,11 @@ public class main_actor : MonoBehaviour
             collision.gameObject.CompareTag("stair") || 
             collision.gameObject.CompareTag("jump_stair") ||
             collision.gameObject.CompareTag("acc_stair_right") ||
-            collision.gameObject.CompareTag("acc_stair_left") ){
+            collision.gameObject.CompareTag("acc_stair_left") ||
+            collision.gameObject.CompareTag("stair_move") || 
+            collision.gameObject.CompareTag("jump_stair_move") ||
+            collision.gameObject.CompareTag("acc_stair_right_move") ||
+            collision.gameObject.CompareTag("acc_stair_left_move")){
 
             timeOnGround_start = Time.time;
             RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 0.8f);
@@ -181,9 +185,11 @@ public class main_actor : MonoBehaviour
                 {
                     // Debug.Log( Vector2.up );
                     // Debug.Log("Collision detected with tag: " + collision.gameObject.tag);
-                    if (collision.gameObject.tag == "floor" || collision.gameObject.tag == "stair"){
+                    if (collision.gameObject.tag == "floor" || 
+                        collision.gameObject.tag == "stair" || 
+                        collision.gameObject.tag == "stair_move"){
                         floor_type = 0;
-                    }else if (collision.gameObject.tag == "jump_stair"){
+                    }else if (collision.gameObject.tag == "jump_stair" || collision.gameObject.tag == "jump_stair_move"){
                         floor_type = 1;
                     }
                     else if (collision.gameObject.tag == "acc_stair_right" ||     
