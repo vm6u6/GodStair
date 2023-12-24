@@ -16,6 +16,11 @@ TagManager:
   - jump_stair
   - acc_stair_left
   - acc_stair_right
+  - stair_move
+  - acc_stair_move
+  - acc_stair_left_move
+  - acc_stair_right_move
+  - jump_stair_move
   layers:
   - Default
   - TransparentFX

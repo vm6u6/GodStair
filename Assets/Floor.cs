@@ -13,7 +13,8 @@ public class Floor : MonoBehaviour
     
     private int cnt_floor_num = 0; 
     private char[] delimiter = { '_' };
-    public float moveSpeed = 0.5f;
+    // TODO make it random
+    public float moveSpeed = 0.1f;
     private float originalY;
     private float minY;
     private float maxY;

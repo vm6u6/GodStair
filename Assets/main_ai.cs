@@ -4,6 +4,9 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using Unity.MLAgents;
+using Unity.MLAgents.Sensors;
+using UnityEngine;
 
 
 public class main_actor : MonoBehaviour
@@ -70,6 +73,7 @@ public class main_actor : MonoBehaviour
 
         // { Movement }_________________________________________________________________________
         float currentSpeed = moveSpeed;
+        
         if (rb.velocity.y == 0f){
             if (Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0)){
                 currentSpeed *= 0.6f;
@@ -138,16 +142,22 @@ public class main_actor : MonoBehaviour
         rb.velocity = new Vector2(rb.velocity.x, yVelocity);
     }
 
+    public override void CollectObservations(VectorSensor vs)
+    {
+        var nextPipePos = pipes.GetNextPipe().localPosition;
+        float vel = Mathf.Clamp(myBody.velocity.y, -height, height);
+
+        vs.AddObservation(transform.localPosition.y / height);
+        vs.AddObservation(vel / height);
+        vs.AddObservation(nextPipePos.y / height);
+        vs.AddObservation(nextPipePos.x);
+        vs.AddObservation(screenPressed ? 1f : -1f);
+    }
+
     private void EndGmae(){
         // Debug.Log(transform.position.y);
         if (transform.position.y < endGame_Line){
             Time.timeScale = 0;
-            pannel.SetActive(true);
-            font.SetActive(true);
-            end.SetActive(true);
-            regist.SetActive(true);
-            level.SetActive(true);
-            start_game.SetActive(true);
             SceneManager.LoadScene(0);
         }
     }
@@ -230,7 +240,6 @@ public class main_actor : MonoBehaviour
                 currentPressTime = 0;
                 isJumping = false;
                 islanding = true;
-                reset_powerBar(); 
             }
         }
     }
@@ -259,50 +268,5 @@ public class main_actor : MonoBehaviour
         {
             power_bar.transform.GetChild(i).gameObject.SetActive(i < activateCount);
         }
-    }
-
-    private void reset_powerBar()
-    {
-        int L = power_bar.transform.childCount;
-        for (int i = 0; i < L; i++)
-        {
-            power_bar.transform.GetChild(i).gameObject.SetActive(false);
-        }
-    }
-
-    public void pause(){
-        if (pause_init){
-            pauseLab.SetActive(true);
-            Time.timeScale = 0;
-            pause_init = false;
-
-        }
-        else{
-            pauseLab.SetActive(false);
-            Time.timeScale = 1;
-            pause_init = true;
-        }
-    }
-
-    public void abort(){
-        Time.timeScale = 0;
-        SceneManager.LoadScene(0);
-
-        pannel.SetActive(true);
-        font.SetActive(true);
-        end.SetActive(true);
-        regist.SetActive(true);
-        level.SetActive(true);
-        start_game.SetActive(true);
-    }
-
-    public void start_gmae(){
-        Time.timeScale = 1;
-        pannel.SetActive(false);
-        font.SetActive(false);
-        end.SetActive(false);
-        regist.SetActive(false);
-        level.SetActive(false);
-        start_game.SetActive(false);
     }
 }
