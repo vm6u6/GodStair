@@ -25,6 +25,7 @@ public class main_actor : MonoBehaviour
 
     private float moveSpeed = 1.5f;              
     public int max_floor = 0; 
+    public int pre_max_floor = 0;
     private float cnt_floor_certification = 0.0f;   
     private int activateCount = 0;
     private float jumpForce = 5f;              
@@ -46,6 +47,7 @@ public class main_actor : MonoBehaviour
     private bool steady = true;
     private float steadyTimer = 0.0f;
     private float steadyThreshold = 0.5f;
+  
     
 
     void Start(){
@@ -73,9 +75,27 @@ public class main_actor : MonoBehaviour
 
         // { Movement }_________________________________________________________________________
         float currentSpeed = moveSpeed;
-        
+        float movement = moveDirection * currentSpeed * Time.deltaTime;
+        transform.Translate(movement, 0f, 0f);
+ 
+        // { Jumping }_________________________________________________________________________
+        cnt_floor();
+        EndGmae();
+        }
+
+    private void FixedUpdate()
+    {
+        float yVelocity = rb.velocity.y;
+        rb.velocity = new Vector2(rb.velocity.x, yVelocity);
+    }
+
+    public override void OnActionReceived(float[] vectorAction)
+    {
+        AddReward(Time.fixedDeltaTime);
+
+
         if (rb.velocity.y == 0f){
-            if (Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0)){
+            if (vectorAction[0]){
                 currentSpeed *= 0.6f;
             }
 
@@ -95,70 +115,43 @@ public class main_actor : MonoBehaviour
             }
         }
 
-    
-        
-        float movement = moveDirection * currentSpeed * Time.deltaTime;
-        transform.Translate(movement, 0f, 0f);
-
-
-        // { Jumping }_________________________________________________________________________
-        // TODO 修該判斷機制 上下移動樓梯 rb.velocity.y == 0f
         if ( steady ){
             RaycastHit2D hitDown = Physics2D.Raycast(transform.position, Vector2.down, 0.2f);
             if (hitDown.collider != null){
                 timeOnGround_end = Time.time;
                 if (timeOnGround_end - timeOnGround_start > overJumpingTime){
-                    if (Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0) && islanding ){
+                    if (vectorAction[0] && islanding ){
                         currentPressTime += Time.deltaTime;
-                        update_powerBar(currentPressTime);
                     }
                     
-                    if (Input.GetKeyDown(KeyCode.Space)  || Input.GetMouseButtonDown(0) && !isJumping && islanding){
+                    if (vectorAction[1] && !isJumping && islanding){
                         isJumping = true;
                     }
 
-                    if (Input.GetKeyUp(KeyCode.Space) || Input.GetMouseButtonUp(0) && islanding ){
+                    if (vectorAction[2] && islanding ){
                         isJumping = false;
                         StartJump();
                     }
                 }
             }
         }
-        // if (rb.velocity.y < 0){
-        //     Debug.Log("Down");
-        //     rb.velocity += Vector2.up * Physics2D.gravity.y * (fallMutiplier - 1) * Time.deltaTime;
-        // }
-        // if (rb.velocity.y > 0){
-        //     Debug.Log("Up");
-        //     // TODO 補上跳躍物理引擎
-        // }
-        cnt_floor();
-        EndGmae();
-        }
-
-    private void FixedUpdate()
+    }
+    
+    public override void Heuristic(float[] action)
     {
-        float yVelocity = rb.velocity.y;
-        rb.velocity = new Vector2(rb.velocity.x, yVelocity);
+        action[0] = Input.GetKey(KeyCode.Space) ? 1f : 0f;
+        action[1] = Input.GetKeyDown(KeyCode.Space) ? 1f : 0f;
+        action[2] = Input.GetKeyUp(KeyCode.Space) ? 1f : 0f;
     }
 
-    public override void CollectObservations(VectorSensor vs)
-    {
-        var nextPipePos = pipes.GetNextPipe().localPosition;
-        float vel = Mathf.Clamp(myBody.velocity.y, -height, height);
-
-        vs.AddObservation(transform.localPosition.y / height);
-        vs.AddObservation(vel / height);
-        vs.AddObservation(nextPipePos.y / height);
-        vs.AddObservation(nextPipePos.x);
-        vs.AddObservation(screenPressed ? 1f : -1f);
-    }
 
     private void EndGmae(){
         // Debug.Log(transform.position.y);
         if (transform.position.y < endGame_Line){
             Time.timeScale = 0;
             SceneManager.LoadScene(0);
+            SetReward(-1f);
+            EndEpisode();
         }
     }
 
@@ -253,20 +246,7 @@ public class main_actor : MonoBehaviour
             textMeshPro.text = max_floor.ToString("D4") + "F";
 
             moveSpeed += 0.2f;
-        }
-    }
-
-    private void update_powerBar(float pressTime_)
-    {
-        int L = power_bar.transform.childCount;
-        activateCount = Mathf.FloorToInt(pressTime_ / 0.04f);
-        if (activateCount > 12){
-            activateCount = activateCount % 12;
-        }
-
-        for (int i = 0; i < L; i++)
-        {
-            power_bar.transform.GetChild(i).gameObject.SetActive(i < activateCount);
+            SetReward(1f);
         }
     }
 }
