@@ -1,18 +1,13 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
-using UnityEngine;
+using Unity.MLAgents.Actuators;
 
 
-public class main_actor : MonoBehaviour
+public class main_ai : Agent
 {
     [SerializeField] private GameObject power_bar;
-    [SerializeField] private TextMeshProUGUI textMeshPro;
     [SerializeField] private GameObject pauseButton;
     [SerializeField] private GameObject abortButton;
     [SerializeField] private GameObject pauseLab;
@@ -48,15 +43,18 @@ public class main_actor : MonoBehaviour
     private float steadyTimer = 0.0f;
     private float steadyThreshold = 0.5f;
   
-    
+    private float currentSpeed = 0.0f;
+    private Rigidbody2D myBody;
 
     void Start(){
         Time.timeScale = 0;
         spriteRenderer = GetComponent<SpriteRenderer>();
-        rb = GetComponent<Rigidbody2D>();
-        Camera mainCamera = Camera.main;
-        Main_camera cameraFollow = mainCamera.GetComponent<Main_camera>();
-        cameraFollow.target = transform;
+
+
+    }
+
+    void config_set(){
+        // TODO
     }
 
     void Update(){  
@@ -74,7 +72,7 @@ public class main_actor : MonoBehaviour
         }
 
         // { Movement }_________________________________________________________________________
-        float currentSpeed = moveSpeed;
+        currentSpeed = moveSpeed;
         float movement = moveDirection * currentSpeed * Time.deltaTime;
         transform.Translate(movement, 0f, 0f);
  
@@ -89,13 +87,20 @@ public class main_actor : MonoBehaviour
         rb.velocity = new Vector2(rb.velocity.x, yVelocity);
     }
 
-    public override void OnActionReceived(float[] vectorAction)
+    public override void Initialize()
+    {
+    }
+    public override void OnEpisodeBegin()
+    {
+    }
+
+    public override void OnActionReceived(ActionBuffers actionBuffers)
     {
         AddReward(Time.fixedDeltaTime);
 
 
         if (rb.velocity.y == 0f){
-            if (vectorAction[0]){
+            if (actionBuffers.ContinuousActions[0] == 1){
                 currentSpeed *= 0.6f;
             }
 
@@ -120,15 +125,15 @@ public class main_actor : MonoBehaviour
             if (hitDown.collider != null){
                 timeOnGround_end = Time.time;
                 if (timeOnGround_end - timeOnGround_start > overJumpingTime){
-                    if (vectorAction[0] && islanding ){
+                    if (actionBuffers.ContinuousActions[0] == 1 && islanding ){
                         currentPressTime += Time.deltaTime;
                     }
                     
-                    if (vectorAction[1] && !isJumping && islanding){
+                    if (actionBuffers.ContinuousActions[1] == 1 && !isJumping && islanding){
                         isJumping = true;
                     }
 
-                    if (vectorAction[2] && islanding ){
+                    if (actionBuffers.ContinuousActions[2] == 1 && islanding ){
                         isJumping = false;
                         StartJump();
                     }
@@ -137,11 +142,13 @@ public class main_actor : MonoBehaviour
         }
     }
     
-    public override void Heuristic(float[] action)
+
+    public override void Heuristic(in ActionBuffers actionsOut)
     {
-        action[0] = Input.GetKey(KeyCode.Space) ? 1f : 0f;
-        action[1] = Input.GetKeyDown(KeyCode.Space) ? 1f : 0f;
-        action[2] = Input.GetKeyUp(KeyCode.Space) ? 1f : 0f;
+        var continuousActionsOut = actionsOut.ContinuousActions;
+        continuousActionsOut[0] = Input.GetKey(KeyCode.Space) ? 1 : 0;
+        continuousActionsOut[1] = Input.GetKeyDown(KeyCode.Space) ? 1 : 0;
+        continuousActionsOut[2] = Input.GetKeyUp(KeyCode.Space) ? 1 : 0;
     }
 
 
@@ -149,7 +156,6 @@ public class main_actor : MonoBehaviour
         // Debug.Log(transform.position.y);
         if (transform.position.y < endGame_Line){
             Time.timeScale = 0;
-            SceneManager.LoadScene(0);
             SetReward(-1f);
             EndEpisode();
         }
@@ -243,8 +249,6 @@ public class main_actor : MonoBehaviour
         {
             max_floor += 1;
             cnt_floor_certification += 7.7177f/2;
-            textMeshPro.text = max_floor.ToString("D4") + "F";
-
             moveSpeed += 0.2f;
             SetReward(1f);
         }
