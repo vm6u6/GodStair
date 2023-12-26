@@ -13,8 +13,6 @@ public class FloorManager : MonoBehaviour
     private float probabilityThreshold = 0.5f; // Adjust this value as needed
 
 
-
-
     public void click_trigger(){
         LevelManager levelManager = FindObjectOfType<LevelManager>();
         if (levelManager != null){

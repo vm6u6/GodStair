@@ -46,15 +46,41 @@ public class main_ai : Agent
     private float currentSpeed = 0.0f;
     private Rigidbody2D myBody;
 
-    void Start(){
-        Time.timeScale = 0;
-        spriteRenderer = GetComponent<SpriteRenderer>();
-
-
+    void config_set(){
+        moveSpeed = 1.5f;              
+        max_floor = 0; 
+        pre_max_floor = 0;
+        cnt_floor_certification = 0.0f;   
+        activateCount = 0;
+        jumpForce = 5f;              
+        moveDirection = 1;            
+        isJumping = false;           
+        islanding = true; 
+        currentPressTime = 0;
+        timeOnGround_start = 0f;
+        timeOnGround_end = 0f;
+        overJumpingTime = 0.1f;
+        endGame_Line = - 7.7177f;
+        // private float fallMutiplier = 2.0f;
+        // private float lowJumpMutiplier = 2.5f;   
+        steady = true;
+        steadyTimer = 0.0f;
+        currentSpeed = 0.0f;
     }
 
-    void config_set(){
-        // TODO
+    List<float>  get_floor_pos(string targetTag){
+        List<float> positions = new List<float>();
+        GameObject[] taggedObjects = GameObject.FindGameObjectsWithTag(targetTag);
+        foreach (GameObject obj in taggedObjects)
+        {
+            positions.Add(obj.transform.position.y);
+        }
+
+        // foreach (float pos in positions){
+        //     Debug.Log("Position: " + pos);
+        // }
+        
+        return positions;
     }
 
     void Update(){  
@@ -70,8 +96,11 @@ public class main_ai : Agent
                 steady = true;
             }
         }
+        // { Get floor position }______________________________________________________________
+        List<float> positions_stair = get_floor_pos("stair");
+    
 
-        // { Movement }_________________________________________________________________________
+        // { Movement }________________________________________________________________________
         currentSpeed = moveSpeed;
         float movement = moveDirection * currentSpeed * Time.deltaTime;
         transform.Translate(movement, 0f, 0f);
@@ -87,11 +116,20 @@ public class main_ai : Agent
         rb.velocity = new Vector2(rb.velocity.x, yVelocity);
     }
 
-    public override void Initialize()
-    {
+    public override void Initialize(){
+        Time.timeScale = 0;
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        myBody = GetComponent<Rigidbody2D>();
     }
-    public override void OnEpisodeBegin()
-    {
+
+    public override void CollectObservations(VectorSensor sensor){
+        sensor.AddObservation(gameObject.transform.position.x);
+        sensor.AddObservation(gameObject.transform.position.y);
+
+    }
+
+    public override void OnEpisodeBegin(){
+        config_set();
     }
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
