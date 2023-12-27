@@ -46,6 +46,14 @@ public class main_ai : Agent
     private float currentSpeed = 0.0f;
     private Rigidbody2D myBody;
 
+    List<Vector2> positions_stair; 
+    List<Vector2> positions_jump_stair;
+    List<Vector2> positions_acc_left_stair;
+    List<Vector2> positions_acc_rigth_stair;
+    List<Vector2> positions_jump_stair_move;
+    List<Vector2> positions_acc_left_stair_move; 
+    List<Vector2> positions_acc_right_stair_move;
+
     void config_set(){
         moveSpeed = 1.5f;              
         max_floor = 0; 
@@ -68,18 +76,17 @@ public class main_ai : Agent
         currentSpeed = 0.0f;
     }
 
-    List<float>  get_floor_pos(string targetTag){
-        List<float> positions = new List<float>();
+    List<Vector2> get_floor_pos(string targetTag)
+    {
+        List<Vector2> positions = new List<Vector2>();
         GameObject[] taggedObjects = GameObject.FindGameObjectsWithTag(targetTag);
+
         foreach (GameObject obj in taggedObjects)
         {
-            positions.Add(obj.transform.position.y);
+            Vector2 objPosition = new Vector2(obj.transform.position.x, obj.transform.position.y);
+            positions.Add(objPosition);
         }
 
-        // foreach (float pos in positions){
-        //     Debug.Log("Position: " + pos);
-        // }
-        
         return positions;
     }
 
@@ -97,7 +104,18 @@ public class main_ai : Agent
             }
         }
         // { Get floor position }______________________________________________________________
-        List<float> positions_stair = get_floor_pos("stair");
+        LevelManager levelManager = FindObjectOfType<LevelManager>();
+        positions_stair = get_floor_pos("stair");
+        if (levelManager.level_option_cnt == 1 || levelManager.level_option_cnt == 2){
+            positions_jump_stair = get_floor_pos( "jump_stair" );
+            positions_acc_left_stair = get_floor_pos( "acc_left_stair" );
+            positions_acc_rigth_stair = get_floor_pos( "acc_rigth_stair" );
+        }
+        if (levelManager.level_option_cnt == 2){
+            positions_jump_stair_move = get_floor_pos( "jump_stair_move" );
+            positions_acc_left_stair_move = get_floor_pos( "acc_left_stair_move" );
+            positions_acc_right_stair_move = get_floor_pos( "acc_right_stair_move" );
+        }
     
 
         // { Movement }________________________________________________________________________
@@ -120,12 +138,50 @@ public class main_ai : Agent
         Time.timeScale = 0;
         spriteRenderer = GetComponent<SpriteRenderer>();
         myBody = GetComponent<Rigidbody2D>();
+        
     }
+
+
 
     public override void CollectObservations(VectorSensor sensor){
         sensor.AddObservation(gameObject.transform.position.x);
         sensor.AddObservation(gameObject.transform.position.y);
-
+        LevelManager levelManager = FindObjectOfType<LevelManager>();
+        foreach (Vector2 pos in positions_stair){
+            sensor.AddObservation(pos.x);
+            sensor.AddObservation(pos.y);
+        }
+        if (levelManager.level_option_cnt == 1 || levelManager.level_option_cnt == 2){
+            foreach (Vector2 pos in positions_jump_stair){
+                sensor.AddObservation(pos.x);
+                sensor.AddObservation(pos.y);
+            }
+            foreach (Vector2 pos in positions_acc_left_stair){
+                sensor.AddObservation(pos.x);
+                sensor.AddObservation(pos.y);
+            }
+            foreach (Vector2 pos in positions_acc_rigth_stair){
+                sensor.AddObservation(pos.x);
+                sensor.AddObservation(pos.y);
+            }
+        }
+        if (levelManager.level_option_cnt == 2){
+            foreach (Vector2 pos in positions_jump_stair_move){
+                sensor.AddObservation(pos.x);
+                sensor.AddObservation(pos.y);
+            }
+            foreach (Vector2 pos in positions_acc_left_stair_move){
+                sensor.AddObservation(pos.x);
+                sensor.AddObservation(pos.y);
+            }
+            foreach (Vector2 pos in positions_acc_right_stair_move){
+                sensor.AddObservation(pos.x);
+                sensor.AddObservation(pos.y);
+            }
+        }
+        sensor.AddObservation(jumpForce);              
+        sensor.AddObservation(moveDirection);            
+        sensor.AddObservation(currentPressTime);
     }
 
     public override void OnEpisodeBegin(){

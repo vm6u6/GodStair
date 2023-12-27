@@ -70,7 +70,7 @@ public class Floor : MonoBehaviour
             // Debug.Log(gameObject.tag);
             if (gameObject.tag == "stair_move" || 
                 gameObject.tag == "jump_stair_move" || 
-                gameObject.tag == "acc_leftstair_move" || 
+                gameObject.tag == "acc_left_stair_move" || 
                 gameObject.tag == "acc_right_stair_move" ){
                     
                     float newY = Mathf.PingPong(Time.time * moveSpeed, maxY - minY) + minY;
